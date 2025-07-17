@@ -5,23 +5,37 @@ import { useAppContext } from "../context/AppContext";
 
 const NavBar = () => {
   const [open, setOpen] = React.useState(false);
-  const { user, setUser, setShowUserLogin, navigate ,searchQuery ,setSearchQuery} = useAppContext();
+  const {
+    user,
+    setUser,
+    setShowUserLogin,
+    navigate,
+    getCartCount,
+    searchQuery,
+    setSearchQuery,
+  } = useAppContext();
 
   const logout = async () => {
     setUser(null);
     navigate("/");
   };
 
-  useEffect(()=>{
-   if(searchQuery.length > 0){
-    navigate("/products");
-
-   } 
-  },[navigate, searchQuery]);
+  useEffect(() => {
+    if (searchQuery.length > 0) {
+      navigate("/products");
+    }
+  }, [navigate, searchQuery]);
 
   return (
     <nav className="flex items-center justify-between px-6 md:px-16 lg:px-24 xl:px-32 py-4 border-b border-gray-300 bg-white relative transition-all">
-      <NavLink to="/" onClick={() => {setOpen(false); setSearchQuery("")}} className="flex items-center gap-2">
+      <NavLink
+        to="/"
+        onClick={() => {
+          setOpen(false);
+          setSearchQuery("");
+        }}
+        className="flex items-center gap-2"
+      >
         <img className=" h-12" src="/logo.png" alt="logo.png" />
       </NavLink>
 
@@ -33,7 +47,7 @@ const NavBar = () => {
 
         <div className="hidden lg:flex items-center text-sm gap-2 border border-gray-300 px-3 rounded-full">
           <input
-          onChange={(e) => setSearchQuery(e.target.value)}
+            onChange={(e) => setSearchQuery(e.target.value)}
             className="py-1.5 w-full bg-transparent outline-none placeholder-gray-500"
             type="text"
             placeholder="Search products"
@@ -41,11 +55,18 @@ const NavBar = () => {
           <img src={assets.search_icon} className="h-4 w-4 " alt="search" />
         </div>
 
-        <div onClick={() => navigate("/cart ")} className="relative cursor-pointer">
-          <img src={assets.nav_cart_icon} alt="cart" className="w-5 opacity-80" />
+        <div
+          onClick={() => navigate("/cart ")}
+          className="relative cursor-pointer"
+        >
+          <img
+            src={assets.nav_cart_icon}
+            alt="cart"
+            className="w-5 opacity-80"
+          />
 
-          <button  className="absolute -top-2 -right-3 text-xs text-white bg-primary w-[18px] h-[18px] rounded-full">
-            3
+          <button className="absolute -top-2 -right-3 text-xs text-white bg-primary w-[18px] h-[18px] rounded-full">
+            {getCartCount()}
           </button>
         </div>
 
@@ -77,13 +98,30 @@ const NavBar = () => {
         )}
       </div>
 
-      <button
-        onClick={() => (open ? setOpen(false) : setOpen(true))}
-        aria-label="Menu"
-        className="sm:hidden"
-      >
-        <img src={assets.menu_icon} alt="menu" className=" " />
-      </button>
+      <div className="sm:hidden flex items-center gap-6">
+        <div
+          onClick={() => navigate("/cart ")}
+          className="relative cursor-pointer"
+        >
+          <img
+            src={assets.nav_cart_icon}
+            alt="cart"
+            className="w-5 opacity-80"
+          />
+
+          <button className="absolute -top-2 -right-3 text-xs text-white bg-primary w-[18px] h-[18px] rounded-full">
+            {getCartCount()}
+          </button>
+        </div>
+
+        <button
+          onClick={() => (open ? setOpen(false) : setOpen(true))}
+          aria-label="Menu"
+          className=""
+        >
+          <img src={assets.menu_icon} alt="menu" className=" " />
+        </button>
+      </div>
 
       {/* Mobile Menu */}
       {open && (

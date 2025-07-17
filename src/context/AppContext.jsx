@@ -7,7 +7,7 @@ import toast from "react-hot-toast";
 export const AppContext = createContext();
 
 export const AppContextProvider = ({ children }) => {
-  const currency = import.meta.VITE_CURRENCY;
+  const currency = import.meta.env.VITE_CURRENCY;
 
   const navigate = useNavigate();
   const [user, setUser] = useState(null);
@@ -41,11 +41,29 @@ export const AppContextProvider = ({ children }) => {
       if (cartData[itemId] === 0) {
         delete cartData[itemId];
       }
-       setCartItems(cartData);
+      setCartItems(cartData);
     }
 
-   
     toast.success("Removed from cart");
+  };
+
+  const getCartCount = () => {
+    let totalCount = 0;
+    for (const items in cartItems) {
+      totalCount += cartItems[items];
+    }
+    return totalCount;
+  };
+
+  const getCartAmount = () => {
+    let totalAmount = 0;
+    for (const items in cartItems) {
+      let itemsInfo = products.find((product) => product._id === items);
+      if (itemsInfo && cartItems[items] > 0) {
+        totalAmount += itemsInfo.offerPrice * cartItems[items];
+      }
+    }
+    return Math.floor(totalAmount * 100) / 100;
   };
 
   const updateCartItem = (itemId, quantity) => {
@@ -70,11 +88,12 @@ export const AppContextProvider = ({ children }) => {
     products,
     currency,
     addToCart,
+    setSearchQuery,
     updateCartItem,
     removeFromCart,
-    cartItems ,
+    cartItems,
     searchQuery,
-    setSearchQuery
+    getCartCount,getCartAmount
   };
   return <AppContext.Provider value={value}>{children}</AppContext.Provider>;
 };
