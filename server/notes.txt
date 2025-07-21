@@ -9,7 +9,8 @@ router? cookie?
 setup server.js
 1.schema in models 
 2. controller for logic
-3. router for routes
+(create middleware add to routes)
+3. router for  routes
 4.import in server.js
 
 openssl rand -base64 64
