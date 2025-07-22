@@ -1,8 +1,12 @@
 /* eslint-disable react-refresh/only-export-components */
 import { createContext, useContext, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { dummyProducts } from "../assets/assets";
+
 import toast from "react-hot-toast";
+import axios from "axios";
+
+axios.defaults.withCredentials = true;
+axios.defaults.baseURL = import.meta.env.VITE_BACKEND_URL;
 
 export const AppContext = createContext();
 
@@ -17,11 +21,56 @@ export const AppContextProvider = ({ children }) => {
   const [cartItems, setCartItems] = useState({});
   const [searchQuery, setSearchQuery] = useState({});
 
-  const fetchProducts = async () => {
-    setProducts(dummyProducts);
+  const fetchSellerStatus = async () => {
+    try {
+      const { data } = await axios.get("/api/seller/is-auth");
+      if (data.success) {
+        setIsSeller(true);
+      } else {
+        setIsSeller(false);
+      }
+    } catch (error) {
+      setIsSeller(false);
+      console.error(error);
+    }
   };
 
-  const addToCart = (itemId) => {
+const fetchUser = async () => {
+  try {
+    const { data } = await axios.get("/api/user/is-auth");
+    if (data.success) {
+      setUser(data.user);
+
+      // Convert array to object
+      const cartObj = {};
+      data.user.cartItems.forEach((item) => {
+        cartObj[item.productId] = item.quantity;
+      });
+
+      setCartItems(cartObj); // 🧠 Important
+    } else {
+      setUser(null);
+    }
+  } catch (error) {
+    setUser(null);
+    console.error(error);
+  }
+};
+
+  const fetchProducts = async () => {
+    try {
+      const { data } = await axios.get("/api/product/list");
+      if (data.success) {
+        setProducts(data.products);
+      } else {
+        toast.error(data.msg);
+      }
+    } catch (error) {
+      toast.error(error.message);
+    }
+  };
+
+  const addToCart =  (itemId) => {
     let cartData = structuredClone(cartItems);
 
     if (cartData[itemId]) {
@@ -75,7 +124,40 @@ export const AppContextProvider = ({ children }) => {
 
   useEffect(() => {
     fetchProducts();
+    fetchSellerStatus();
+    fetchUser();
   }, []);
+
+useEffect(() => {
+  const updateCart = async () => {
+    try {
+      // Convert object to array of { productId, quantity }
+      const cartArray = Object.entries(cartItems).map(([productId, quantity]) => ({
+        productId,
+        quantity,
+      }));
+
+      console.log("Sending cart to backend:", cartArray);
+
+      const { data } = await axios.post("/api/cart/update", {
+        userId: user._id,
+        cartItems: cartArray,
+      });
+
+      if (!data.success) {
+        toast.error(data.msg);
+      }
+    } catch (error) {
+      toast.error(error.message);
+    }
+  };
+
+  if (user) {
+    updateCart(); // ✅ Only runs when user & cartItems change
+  }
+}, [cartItems, user]);
+
+
 
   const value = {
     user,
@@ -93,7 +175,10 @@ export const AppContextProvider = ({ children }) => {
     removeFromCart,
     cartItems,
     searchQuery,
-    getCartCount,getCartAmount
+    getCartCount,
+    getCartAmount,
+    axios,
+    fetchProducts,
   };
   return <AppContext.Provider value={value}>{children}</AppContext.Provider>;
 };
