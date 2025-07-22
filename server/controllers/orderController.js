@@ -7,7 +7,7 @@ export const placeOrderCOD = async (req, res) => {
   try {
     const { userId, items, address } = req.body;
     if (!address || items.length === 0) {
-      res.json({ success: false, message: "Invalid Data" });
+      res.json({ success: false, msg: "Invalid Data" });
     }
 
     let amount = await items.reduce(async (acc, item) => {
@@ -23,7 +23,7 @@ export const placeOrderCOD = async (req, res) => {
       address,
       paymentType: "COD",
     });
-    return res.json({ success: true, message: "order placed successfully" });
+    return res.json({ success: true, msg: "order placed successfully" });
   } catch (error) {
     return res.json({ success: false, message: error.message });
   }

@@ -12,7 +12,7 @@ export const sellerLogin = async (req, res) => {
       const token = jwt.sign({ email }, process.env.JWT_SECRET, {
         expiresIn: "7d",
       });
-      res.cookie("token", token, {
+      res.cookie("sellerToken", token, {
         httpOnly: true, // prevent js to access cookie
         secure: process.env.NODE_ENV === "production", // use secure cookie in production
         sameSite: process.env.NODE_ENV === "production" ? "none" : "strict",
@@ -47,7 +47,8 @@ export const SellerLogout = async (req, res) => {
     res.clearCookie("sellerToken", {
       httpOnly: true,
       secure: process.env.NODE_ENV === "production",
-      sameSite: process.env.NODE_ENV === "production" ? "none" : "strict",
+      sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
+
     });
     return res.json({ success: true, msg: "Logged Out" });
   } catch (error) {
