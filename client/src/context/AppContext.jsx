@@ -131,13 +131,12 @@ const fetchUser = async () => {
 useEffect(() => {
   const updateCart = async () => {
     try {
-      // Convert object to array of { productId, quantity }
       const cartArray = Object.entries(cartItems).map(([productId, quantity]) => ({
         productId,
         quantity,
       }));
 
-      console.log("Sending cart to backend:", cartArray);
+     
 
       const { data } = await axios.post("/api/cart/update", {
         userId: user._id,
@@ -179,6 +178,7 @@ useEffect(() => {
     getCartAmount,
     axios,
     fetchProducts,
+    setCartItems
   };
   return <AppContext.Provider value={value}>{children}</AppContext.Provider>;
 };

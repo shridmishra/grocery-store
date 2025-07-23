@@ -23,7 +23,7 @@ export const placeOrderCOD = async (req, res) => {
       address,
       paymentType: "COD",
     });
-    return res.json({ success: true, msg: "order placed successfully" });
+    return res.json({ success: true, msg: "Orders Placed Successfully" });
   } catch (error) {
     return res.json({ success: false, message: error.message });
   }
@@ -33,18 +33,37 @@ export const placeOrderCOD = async (req, res) => {
 
 export const getUserOrder = async (req, res) => {
   try {
-    const { userId } = req.body;
+    let userId;
+    
+    // In production, use authenticated user
+    if (req.user && req.user.id) {
+      userId = req.user.id.toString();
+    } 
+    // Fallback for development/testing
+    else if (process.env.NODE_ENV === 'development' && req.query.userId) {
+      userId = req.query.userId;
+    }
+    else {
+      return res.status(401).json({ 
+        success: false, 
+        message: "Authentication required" 
+      });
+    }
+    
+    
     const orders = await Order.find({
-      userId,
+      userId: userId,
       $or: [{ paymentType: "COD" }, { isPaid: true }],
     })
       .populate("items.product address")
       .sort({
         createdAt: -1,
       });
+    
+    
     res.json({ success: true, orders });
   } catch (error) {
-    return res.json({ success: false, message: error.message });
+    return res.status(500).json({ success: false, message: error.message });
   }
 };
 
