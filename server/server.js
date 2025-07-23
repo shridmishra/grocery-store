@@ -18,7 +18,7 @@ await connectDB();
 await connectCloudinary();
 
 //Middleware Config
-const allowedOrigin = ["http://localhost:5173"];
+const allowedOrigin = ["http://localhost:5173","https://grocery-store-shrid.vercel.app/"];
 
 app.post('/stripe',express.raw({type: 'application/json'}),stripeWebhooks)
 app.use(express.json());
