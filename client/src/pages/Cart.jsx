@@ -42,8 +42,8 @@ const Cart = () => {
         const { data } = await axios.get(`/api/address/get?userId=${user._id}`);
         if (data.success) {
           if (Array.isArray(data.addresses) && data.addresses.length > 0) {
-            setAddresses(data.addresses); 
-            setSelectedAddress(data.addresses[0]); 
+            setAddresses(data.addresses);
+            setSelectedAddress(data.addresses[0]);
           }
         } else {
           toast.error(data.msg);
@@ -101,9 +101,22 @@ const Cart = () => {
           navigate("/my-order");
           setTimeout(() => {
             setCartItems({});
-          }, 500); 
+          }, 500);
         } else {
           toast.error(data.msg);
+        }
+      } else {
+        //Place order with stripe
+        const { data } = await axios.post("/api/order/stripe", {
+          userId: user._id,
+          items,
+          address: selectedAddress._id,
+        });
+
+        if (data.success) {
+          window.location.replace(data.url);
+        } else {
+          toast.error(data.message);
         }
       }
     } catch (error) {
