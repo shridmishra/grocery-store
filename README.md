@@ -8,6 +8,18 @@
 
 ---
 
+### 🖼️ Screenshots
+
+#### 🏠 Home Page
+
+![Home](./client/public/home.png)
+
+#### 📦 Product Page
+
+![Product Page](./client/public/product-page.png)
+
+---
+
 ## ✨ Overview
 
 This is a self-built grocery store application that allows users to:
@@ -24,14 +36,63 @@ Built to solidify my understanding of the MERN stack (MongoDB, Express, React, N
 
 ## 🔧 Tech Stack
 
-**Frontend**
+**Frontend :**
 React, Tailwind CSS, React Router, React Hot Toast
 
-**Backend**
+**Backend :**
 Node.js, Express, MongoDB, Mongoose, JWT, bcrypt, cookie-parser
 
-**Other Tools**
+**Other Tools :**
 Cloudinary (image uploads), Stripe (payments), dotenv, Vercel (hosting)
+
+---
+
+## 📡 API Highlights
+
+> Base URL: `/api`
+
+### 🔑 Auth
+
+* `POST /auth/register`
+* `POST /auth/login`
+
+### 🍒 Products
+
+* `GET /product`
+* `GET /product/:id`
+
+### 🛒 Cart
+
+* `POST /cart/add`
+* `PUT /cart/update`
+* `DELETE /cart/remove/:id`
+
+### 💼 Orders
+
+* `POST /order/cod`
+* `POST /order/stripe`
+* `GET /order/user?userId=xyz`
+
+### 🏠 Address
+
+* `POST /address/add`
+* `GET /address/user/:id`
+* `DELETE /address/:id`
+
+---
+
+## 📅 Folder Structure
+
+```
+grocery-store/
+├── client/      # React frontend
+│   └── pages/   # Home, Cart, Login, Orders, etc.
+├── server/      # Express backend
+│   ├── routes/
+│   ├── controllers/
+│   ├── models/
+│   └── configs/
+```
 
 ---
 
@@ -87,68 +148,7 @@ STRIPE_SECRET_KEY=your_stripe_secret
 
 ---
 
-## 📡 API Highlights
 
-> Base URL: `/api`
-
-### 🔑 Auth
-
-* `POST /auth/register`
-* `POST /auth/login`
-
-### 🍒 Products
-
-* `GET /product`
-* `GET /product/:id`
-
-### 🛒 Cart
-
-* `POST /cart/add`
-* `PUT /cart/update`
-* `DELETE /cart/remove/:id`
-
-### 💼 Orders
-
-* `POST /order/cod`
-* `POST /order/stripe`
-* `GET /order/user?userId=xyz`
-
-### 🏠 Address
-
-* `POST /address/add`
-* `GET /address/user/:id`
-* `DELETE /address/:id`
-
----
-
-## 📅 Folder Structure
-
-```
-grocery-store/
-├── client/      # React frontend
-│   └── pages/   # Home, Cart, Login, Orders, etc.
-├── server/      # Express backend
-│   ├── routes/
-│   ├── controllers/
-│   ├── models/
-│   └── configs/
-```
-
----
-
-## 📲 Screenshots (Optional)
-
-### 🖼️ Screenshots
-
-#### 🏠 Home Page
-
-![Home](./client/public/home.png)
-
-#### 📦 Product Page
-
-![Product Page](./client/public/product-page.png)
-
----
 
 ## 😊 Notes
 
