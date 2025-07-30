@@ -24,7 +24,8 @@ await connectCloudinary();
 //  CORS Configuration
 const allowedOrigins = [
   "http://localhost:5173",
-  "https://grocery-store-shrid.vercel.app"
+  "https://grocery-store-shrid.vercel.app",
+  "https://grocery.shrid.in",
 ];
 
 app.use(
@@ -36,12 +37,12 @@ app.use(
         callback(new Error("Not allowed by CORS"));
       }
     },
-    credentials: true
+    credentials: true,
   })
 );
 
 // Stripe webhook (must come BEFORE express.json)
-app.post('/stripe', express.raw({ type: 'application/json' }), stripeWebhooks);
+app.post("/stripe", express.raw({ type: "application/json" }), stripeWebhooks);
 
 app.use(express.json());
 app.use(cookieParser());
