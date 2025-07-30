@@ -4,7 +4,7 @@ const authSeller = async (req, res, next) => {
   const { sellerToken } = req.cookies;
 
   if (!sellerToken) {
-    return res.status(401).json({ success: false, msg: "No token. Not authorized" });
+    return res.json({ success: false, msg: "No token. Not authorized" });
   }
 
   try {
@@ -14,10 +14,10 @@ const authSeller = async (req, res, next) => {
       req.userId = decoded.id;
       next();
     } else {
-      return res.status(403).json({ success: false, msg: "Invalid seller credentials" });
+      return res.json({ success: false, msg: "Invalid seller credentials" }); 
     }
   } catch (error) {
-    return res.status(401).json({ success: false, msg: "Invalid or expired token" });
+    return res.json({ success: false, msg: "Invalid or expired token" }); 
   }
 };
 

@@ -14,7 +14,8 @@ const NavBar = () => {
     getCartCount,
     searchQuery,
     setSearchQuery,
-    axios
+    axios,
+  
   } = useAppContext();
 
   const logout = async () => {
@@ -57,9 +58,18 @@ const NavBar = () => {
 
       {/* Desktop Menu */}
       <div className="hidden sm:flex items-center gap-8">
+         
+          <button
+            onClick={() => navigate("/seller")}
+            className="text-xs border px-4 py-1.5 rounded-full cursor-pointer"
+          >
+            Seller Dashboard
+          </button>
+        
         <NavLink to="/">Home</NavLink>
         <NavLink to="/products">Products</NavLink>
         <NavLink to="/contacts">Contact</NavLink>
+
 
         <div className="hidden lg:flex items-center text-sm gap-2 border border-gray-300 px-3 rounded-full">
           <input
@@ -98,7 +108,7 @@ const NavBar = () => {
             <img src={assets.profile_icon} alt="profile" className="w-10" />
             <ul className="hidden group-hover:block absolute top-10 right-0 bg-white shadow border border-gray-200 py-2.5 w-30  rounded-md text-sm z-40">
               <li
-                onClick={() => navigate("my-orders")}
+                onClick={() => navigate("my-order")}
                 className="p-1.5 pl-3 hover:bg-primary/10 cursor-pointer"
               >
                 My Orders
@@ -146,6 +156,12 @@ const NavBar = () => {
             open ? "flex" : "hidden"
           } absolute top-[60px] left-0 w-full z-50 bg-white shadow-md py-4 flex-col items-start gap-2 px-5 text-sm md:hidden`}
         >
+           <button
+            onClick={() => navigate("/seller")}
+            className="text-xs border px-4 py-1.5 my-1.5 rounded-full cursor-pointer"
+          >
+            Seller Dashboard
+          </button>
           <NavLink to="/" onClick={() => setOpen(false)}>
             Home
           </NavLink>
@@ -160,6 +176,7 @@ const NavBar = () => {
           <NavLink to="/" onClick={() => setOpen(false)}>
             Contact
           </NavLink>
+         
           {!user ? (
             <button
               onClick={() => {
