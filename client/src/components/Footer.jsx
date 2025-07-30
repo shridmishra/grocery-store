@@ -1,4 +1,4 @@
-import { footerLinks } from "../assets/assets";
+import { footerLinks } from "../../public/assets/assets";
 
 const Footer = () => {
  

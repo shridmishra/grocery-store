@@ -1,4 +1,4 @@
-import { assets } from "../assets/assets";
+import { assets } from "../../public/assets/assets";
 import { useAppContext } from "../context/AppContext";
 
 const ProductCard = ({ product }) => {

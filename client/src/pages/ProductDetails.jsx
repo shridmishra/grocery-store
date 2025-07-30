@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useAppContext } from "../context/AppContext";
 import { useParams } from "react-router-dom";
-import { assets } from "../assets/assets";
+import { assets } from "../../public/assets/assets";
 import ProductCard from "../components/ProductCard";
 
 const ProductDetails = () => {
