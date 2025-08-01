@@ -24,12 +24,11 @@ export const AppContextProvider = ({ children }) => {
 const fetchSellerStatus = async () => {
   try {
     const { data } = await axios.get("/api/seller/is-auth");
-    setIsSeller(data.success); // true if authenticated seller
+    setIsSeller(data.success); 
   } catch (error) {
     if (error.response?.status === 401) {
       setIsSeller(false);
     } else {
-      // Log only unexpected errors
       console.error("fetchSellerStatus error:", error.message);
     }
   }
@@ -187,6 +186,7 @@ const fetchSellerStatus = async () => {
     axios,
     fetchProducts,
     setCartItems,
+    fetchUser
   };
   return <AppContext.Provider value={value}>{children}</AppContext.Provider>;
 };

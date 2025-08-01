@@ -52,9 +52,12 @@ const AddAddress = () => {
   const onSubmitHandler = async (e) => {
     e.preventDefault();
     try {
+      
       const { data } = await axios.post("/api/address/add", {
-        address,
-        userId: user._id,
+        address: {
+          ...address,
+          userId: user._id,
+        },
       });
 
       if (data.success) {
@@ -76,31 +79,32 @@ const AddAddress = () => {
   }, [navigate, user]);
 
   // Fetch existing address
-useEffect(() => {
-  const getUserAddress = async () => {
-    try {
-      setLoading(true);
-      const { data } = await axios.get(`/api/address/get?userId=${user._id}`);
-      setLoading(false);
+  useEffect(() => {
+    const getUserAddress = async () => {
+      try {
+         if (!user || !user._id) return;
+        setLoading(true);
+        const { data } = await axios.get(`/api/address/get?userId=${user._id}`);
+        setLoading(false);
 
-      if (data.success) {
-        if (data.addresses && data.addresses.length > 0) {
-          const { _id, ...cleanAddress } = data.addresses[0]; 
-          setAddress(cleanAddress);
+        if (data.success) {
+          if (data.addresses && data.addresses.length > 0) {
+            const { _id, ...cleanAddress } = data.addresses[0];
+            setAddress(cleanAddress);
+          }
+        } else {
+          toast.error(data.msg);
         }
-      } else {
-        toast.error(data.msg);
+      } catch (error) {
+        setLoading(false);
+        toast.error(error.message);
       }
-    } catch (error) {
-      setLoading(false);
-      toast.error(error.message);
-    }
-  };
+    };
 
-  if (user) {
-    getUserAddress();
-  }
-}, [axios, user]);
+    if (user) {
+      getUserAddress();
+    }
+  }, [axios, user]);
 
   // Loading state
   if (!user || loading) {

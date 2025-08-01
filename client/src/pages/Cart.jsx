@@ -1,33 +1,62 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState, useCallback } from "react";
 import { useAppContext } from "../context/AppContext";
 import { assets } from "../../public/assets/assets";
 import toast from "react-hot-toast";
 
 const Cart = () => {
-  const [showAddress, setShowAddress] = React.useState(false);
   const {
     user,
+    fetchUser,
     products,
-    currency,
     cartItems,
     setCartItems,
     removeFromCart,
-    getCartCount,
     updateCartItem,
-    navigate,
+    getCartCount,
     getCartAmount,
+    currency,
     axios,
+    navigate,
+    setShowUserLogin,
   } = useAppContext();
 
-  const [cartArray, setCartArray] = React.useState([]);
-  const [addresses, setAddresses] = React.useState([]);
-  const [selectedAddress, setSelectedAddress] = React.useState(null);
-  const [selectedPayment, setSelectedPayment] = React.useState("COD");
+  const [cartArray, setCartArray] = useState([]);
+  const [addresses, setAddresses] = useState([]);
+  const [selectedAddress, setSelectedAddress] = useState(null);
+  const [showAddress, setShowAddress] = useState(false);
+  const [selectedPayment, setSelectedPayment] = useState("COD");
 
-  const getCart = React.useCallback(() => {
-    let tempArray = [];
+  // 🟢 1. Ensure user is fetched if not available
+  useEffect(() => {
+    if (!user?._id) {
+      fetchUser();
+    }
+  }, [user, fetchUser]);
+
+  // 🟢 2. Fetch address once user is available
+  useEffect(() => {
+    if (!user?._id) return;
+
+    const getUserAddress = async () => {
+      try {
+        const { data } = await axios.get(`/api/address/get?userId=${user._id}`);
+        if (data.success && data.addresses.length > 0) {
+          setAddresses(data.addresses);
+          setSelectedAddress(data.addresses[0]);
+        }
+      } catch (error) {
+        toast.error(error.message);
+      }
+    };
+
+    getUserAddress();
+  }, [user?._id, axios]);
+
+  // 🟢 3. Build cart UI from cartItems
+  const getCart = useCallback(() => {
+    const tempArray = [];
     for (const key in cartItems) {
-      let product = products.find((item) => item._id === key);
+      const product = products.find((item) => item._id === key);
       if (product) {
         product.quantity = cartItems[key];
         tempArray.push(product);
@@ -37,28 +66,6 @@ const Cart = () => {
   }, [products, cartItems]);
 
   useEffect(() => {
-    const getUserAddress = async () => {
-      try {
-        const { data } = await axios.get(`/api/address/get?userId=${user._id}`);
-        if (data.success) {
-          if (Array.isArray(data.addresses) && data.addresses.length > 0) {
-            setAddresses(data.addresses);
-            setSelectedAddress(data.addresses[0]);
-          }
-        } else {
-          toast.error(data.msg);
-        }
-      } catch (error) {
-        toast.error(error.message);
-      }
-    };
-
-    if (user) {
-      getUserAddress();
-    }
-  }, [axios, user]);
-
-  useEffect(() => {
     if (products.length > 0 && cartItems) {
       getCart();
     }
@@ -66,20 +73,23 @@ const Cart = () => {
 
   const placeOrder = async () => {
     try {
+      if (!user?._id) {
+        toast.error("Please log in to place an order");
+        setShowUserLogin(true);
+        return;
+      }
+
       if (!selectedAddress) {
-        toast.error("Please Select an Address");
+        toast.error("Please select an address");
+        return;
       }
 
       const items = Object.keys(cartItems)
         .map((key) => {
           const product = products.find((item) => item._id === key);
-          if (product) {
-            return {
-              product: product._id,
-              quantity: cartItems[key],
-            };
-          }
-          return null;
+          return product
+            ? { product: product._id, quantity: cartItems[key] }
+            : null;
         })
         .filter(Boolean);
 
@@ -88,7 +98,6 @@ const Cart = () => {
         return;
       }
 
-      //COD
       if (selectedPayment === "COD") {
         const { data } = await axios.post("/api/order/cod", {
           userId: user._id,
@@ -99,21 +108,23 @@ const Cart = () => {
         if (data.success) {
           toast.success(data.msg);
           navigate("/my-order");
-          setTimeout(() => {
-            setCartItems({});
-          }, 500);
+          setTimeout(() => setCartItems({}), 500);
         } else {
           toast.error(data.msg);
         }
       } else {
-        //Place order with stripe
+        const loadingToast = toast.loading("Redirecting to checkout...");
+
         const { data } = await axios.post("/api/order/stripe", {
           userId: user._id,
           items,
           address: selectedAddress._id,
         });
 
+        toast.dismiss(loadingToast);
+
         if (data.success) {
+          toast.success("Redirecting to payment...");
           window.location.replace(data.url);
         } else {
           toast.error(data.message);
@@ -124,6 +135,7 @@ const Cart = () => {
     }
   };
 
+  // UI Starts here
   return products.length > 0 && cartItems ? (
     <div className="flex flex-col md:flex-row mt-16">
       <div className="flex-1 max-w-4xl">
@@ -216,8 +228,9 @@ const Cart = () => {
         </button>
       </div>
 
+      {/* Order Summary */}
       <div className="max-w-[360px] w-full bg-gray-100/40 p-5 max-md:mt-16 border border-gray-300/70">
-        <h2 className="text-xl md:text-xl font-medium">Order Summary</h2>
+        <h2 className="text-xl font-medium">Order Summary</h2>
         <hr className="border-gray-300 my-5" />
 
         <div className="mb-6">

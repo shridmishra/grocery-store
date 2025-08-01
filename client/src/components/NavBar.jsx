@@ -15,25 +15,21 @@ const NavBar = () => {
     searchQuery,
     setSearchQuery,
     axios,
-  
+    fetchUser,
   } = useAppContext();
 
   const logout = async () => {
-    
     try {
-      const {data} = await axios.get("/api/user/logout");
-      if(data.success){
-         toast.success(data.msg);
-         setUser(null)
-         navigate("/");
-
-          
-      }else{
+      const { data } = await axios.get("/api/user/logout");
+      if (data.success) {
+        toast.success(data.msg);
+        setUser(null);
+        navigate("/");
+      } else {
         toast.error(data.msg);
       }
-      
     } catch (error) {
-        toast.error(error.message);
+      toast.error(error.message);
     }
   };
 
@@ -58,18 +54,16 @@ const NavBar = () => {
 
       {/* Desktop Menu */}
       <div className="hidden sm:flex items-center gap-8">
-         
-          <button
-            onClick={() => navigate("/seller")}
-            className="text-xs border px-4 py-1.5 rounded-full cursor-pointer"
-          >
-            Seller Dashboard
-          </button>
-        
+        <button
+          onClick={() => navigate("/seller")}
+          className="text-xs border px-4 py-1.5 rounded-full cursor-pointer"
+        >
+          Seller Dashboard
+        </button>
+
         <NavLink to="/">Home</NavLink>
         <NavLink to="/products">Products</NavLink>
         <NavLink to="/contacts">Contact</NavLink>
-
 
         <div className="hidden lg:flex items-center text-sm gap-2 border border-gray-300 px-3 rounded-full">
           <input
@@ -82,7 +76,10 @@ const NavBar = () => {
         </div>
 
         <div
-          onClick={() => navigate("/cart")}
+          onClick={async () => {
+            if (!user) await fetchUser();
+            navigate("/cart");
+          }}
           className="relative cursor-pointer"
         >
           <img
@@ -126,7 +123,11 @@ const NavBar = () => {
 
       <div className="sm:hidden flex items-center gap-6">
         <div
-          onClick={() => navigate("/cart ")}
+          onClick={async () => {
+  if (!user) await fetchUser();
+  navigate("/cart");
+}}
+
           className="relative cursor-pointer"
         >
           <img
@@ -156,7 +157,7 @@ const NavBar = () => {
             open ? "flex" : "hidden"
           } absolute top-[60px] left-0 w-full z-50 bg-white shadow-md py-4 flex-col items-start gap-2 px-5 text-sm md:hidden`}
         >
-           <button
+          <button
             onClick={() => navigate("/seller")}
             className="text-xs border px-4 py-1.5 my-1.5 rounded-full cursor-pointer"
           >
@@ -169,14 +170,14 @@ const NavBar = () => {
             Products
           </NavLink>
           {user && (
-            <NavLink to="/" onClick={() => setOpen(false)}>
+            <NavLink to="/my-order" onClick={() => setOpen(false)}>
               My Orders
             </NavLink>
           )}
           <NavLink to="/" onClick={() => setOpen(false)}>
             Contact
           </NavLink>
-         
+
           {!user ? (
             <button
               onClick={() => {

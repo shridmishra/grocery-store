@@ -1,12 +1,10 @@
 import jwt from "jsonwebtoken";
 
 const authUser = async (req, res, next) => {
-  const token = req.cookies?.token; // Safely access token from cookies
+  const token = req.cookies?.token;
 
   if (!token) {
-    return res
-      .status(401)
-      .json({ success: false, error: "Not authorized, no token" });
+    return res.json({ success: false, msg: "No token. Not authorized" });
   }
 
   try {
@@ -19,9 +17,7 @@ const authUser = async (req, res, next) => {
 
     next();
   } catch (error) {
-    return res
-      .status(401)
-      .json({ success: false, error: "Invalid or expired token" });
+    return res.json({ success: false, error: "Invalid or expired token" });
   }
 };
 

@@ -13,6 +13,7 @@ const MyOrders = () => {
         });
 
         if (data.success) {
+          
           setMyOrders(data.orders);
         }
       } catch (error) {
@@ -74,7 +75,17 @@ const MyOrders = () => {
 
                   <div className="flex flex-col justify-center md:ml-8 mb-4 md:mb-0">
                     <p>Quantity: {item.quantity || "1"}</p>
-                    <p>Status: {item.status || "Pending"}</p>
+                    <p>
+                      Status:{" "}
+                      <span
+                        className={`font-medium ${
+                          order.isPaid ? "text-green-600" : "text-yellow-600"
+                        }`}
+                      >
+                        {order.isPaid ? "Paid" : " Pending"}
+                      </span>
+                    </p>
+
                     <p>
                       Date:{" "}
                       {new Date(order.createdAt).toLocaleDateString("en-IN")}

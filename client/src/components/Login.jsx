@@ -5,9 +5,10 @@ import toast from "react-hot-toast";
 const Login = () => {
   const [state, setState] = React.useState("login");
   const [name, setName] = React.useState("user");
-  const [email, setEmail] = React.useState("user@example.com");
+  const [email, setEmail] = React.useState("user@test.com");
   const [password, setPassword] = React.useState("user123");
-  const { setShowUserLogin, setUser, axios, navigate } = useAppContext();
+  const { setShowUserLogin, setUser, axios, navigate, fetchUser } =
+    useAppContext();
 
   const onSubmitHandler = async (e) => {
     try {
@@ -19,8 +20,11 @@ const Login = () => {
         password,
       });
       if (data.success) {
-        navigate("/");
+        toast.success("Logged In")
+        await fetchUser();
+
         setUser(data.user), setShowUserLogin(false);
+        navigate("/");
       } else {
         toast.error(data.msg);
       }
@@ -70,7 +74,7 @@ const Login = () => {
             onChange={(e) => setEmail(e.target.value)}
             value={email}
             placeholder="Type here"
-            className="border border-gray-200 rounded w-full p-2 mt-1 outline-primary"
+            className="border border-gray-200 rounded w-full p-2 mt-1 outline-primary text-black"
             type="email"
             required
           />
@@ -81,7 +85,7 @@ const Login = () => {
             onChange={(e) => setPassword(e.target.value)}
             value={password}
             placeholder="Type here"
-            className="border border-gray-200 rounded w-full p-2 mt-1 outline-primary"
+            className="border border-gray-200 rounded w-full p-2 mt-1 outline-primary text-black"
             type="password"
             required
           />
