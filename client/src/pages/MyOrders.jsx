@@ -7,8 +7,9 @@ const MyOrders = () => {
 
   useEffect(() => {
     const fetchMyOrders = async () => {
+      if (!user?._id) return;
       try {
-        const { data } = await axios.get(`/api/order/user?userId=${user._id}`, {
+        const { data } = await axios.get("/api/order/user", {
           withCredentials: true,
         });
 
