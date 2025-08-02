@@ -35,30 +35,34 @@ const fetchSellerStatus = async () => {
 };
 
 
-  const fetchUser = async () => {
-    try {
-      const { data } = await axios.get("/api/user/is-auth");
-      if (data.success) {
-        setUser(data.user);
+const fetchUser = async () => {
+  try {
+    const { data } = await axios.get("/api/user/is-auth", {
+      withCredentials: true, 
+    });
+    if (data.success) {
+      setUser(data.user);
 
-        // Convert array to object
-        const cartObj = {};
-        Array.isArray(data.user.cartItems) &&
-          data.user.cartItems.forEach((item) => {
-            if (item.productId && item.quantity > 0) {
-              cartObj[item.productId] = item.quantity;
-            } 
-          });
+      // Convert array to object
+      const cartObj = {};
+      Array.isArray(data.user.cartItems) &&
+        data.user.cartItems.forEach((item) => {
+          if (item.productId && item.quantity > 0) {
+            cartObj[item.productId] = item.quantity;
+          }
+        });
 
-        setCartItems(cartObj);
-      } else {
-        setUser(null);
-      }
-    } catch (error) {
+      setCartItems(cartObj);
+    } else {
       setUser(null);
+    }
+  } catch (error) {
+    setUser(null);
+    if (error.response?.status !== 401) {
       console.error(error);
     }
-  };
+  }
+};
 
   const fetchProducts = async () => {
     try {

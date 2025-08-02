@@ -21,6 +21,8 @@ const PORT = process.env.PORT || 3000;
 await connectDB();
 await connectCloudinary();
 
+app.set("trust proxy", 1);
+
 //  CORS Configuration
 const allowedOrigins = [
   "http://localhost:5173",
